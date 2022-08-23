@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <style>
+        .component1 {
+            display: block;
+            background-color: green;
+            height: 15em;
+            text-align: center;
+            color: white;
+            padding-top: 5em;
+        }
+         
+        .component2 {
+            display: block;
+            background-color: grey;
+            height: 15em;
+            text-align: center;
+            padding-top: 5em;
+        }
+    </style>
+
+</head>
+<body>
+
+
+    <div id="app">{{message}}
+
+        <parentcomponent></parentcomponent>
+
+
+
+        <div v-html="message2"></div>
+
+
+
+
+        <nav-bar propvalue="Prop Value from nav bar"></nav-bar>
+    </div>
+
+    <script>
+
+        Vue.component('component1',{
+            props:['labeltext'],
+            template: `<div class="component1">
+    <h1>You have clicked {{labeltext}} times</h1>
+    <slot></slot>
+    </div>`
+        })
+
+
+        Vue.component('component2',{
+            data() {
+        return {
+            nclick: 0
+        }
+    },
+    template: `<div class="component2">
+        <button @click = "count">Click</button>
+        </div>`,
+        methods: {
+        count(){
+            this.nclick += 1;
+            this.$emit('myevent', this.nclick)
+        }
+        }
+        })
+
+        Vue.component('parentcomponent', {
+    data() {
+        return {
+            text: 0
+        }
+    },
+ 
+    // Set method is binded to the 'setevent'
+    // event and labeltext is the prop.
+    template: `<div>
+        <component1 :labeltext = "text">This is slot value!</component1>
+        <component2  @myevent = "set"></component2>
+    </div>`,
+    methods: {
+        set(n) {
+ 
+            // Updates the variable text which
+            // is the value of prop attribute
+            this.text = n;
+        }
+    }
+});
+
+
+
+    Vue.component('nav-bar',{
+        props: ['propvalue'],
+        data() {
+            return {
+                navMessage: "Hi from Nav Bar Component!"
+            }
+        }, 
+        template: '<h1>{{navMessage}} <br>{{propvalue}}</h1>'
+    })
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                message: "Hello There!",
+                message2: '<h1>HELLO '+
+                           '<span style="color:blue;">'+
+                              'WORLD</span>'+
+                         '</h1>'
+            }
+        }
+    
+    })
+    </script>
+    
+
+    <!-- https://www.geeksforgeeks.org/communication-between-components-using-emit-and-props-in-vue-js/ -->
+</body>
+</html>
